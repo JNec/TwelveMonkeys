@@ -183,7 +183,7 @@ public final class EXIFWriter extends MetadataWriter {
 
     private Directory ensureOrderedDirectory(final Directory directory) {
         if (!isSorted(directory)) {
-            List<Entry> entries = new ArrayList<>(directory.size());
+            List<Entry> entries = new ArrayList<Entry>(directory.size());
 
             for (Entry entry : directory) {
                 entries.add(entry);

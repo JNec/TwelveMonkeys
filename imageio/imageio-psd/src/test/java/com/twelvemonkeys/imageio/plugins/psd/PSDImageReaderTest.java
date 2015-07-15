@@ -30,12 +30,14 @@ package com.twelvemonkeys.imageio.plugins.psd;
 
 import com.twelvemonkeys.imageio.util.ImageReaderAbstractTest;
 import com.twelvemonkeys.imageio.util.ProgressListenerBase;
+
 import org.junit.Test;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -241,7 +243,7 @@ public class PSDImageReaderTest extends ImageReaderAbstractTest<PSDImageReader> 
 
         imageReader.setInput(getTestData().get(0).getInputStream());
 
-        final List<Object> sequnce = new ArrayList<>();
+        final List<Object> sequnce = new ArrayList<Object>();
         imageReader.addIIOReadProgressListener(new ProgressListenerBase() {
             private float mLastPercentageDone = 0;
 

@@ -140,7 +140,7 @@ public final class TIFFImageWriter extends ImageWriterBase {
             throw new IllegalArgumentException("Unknown bit/bandOffsets for sample model: " + sampleModel);
         }
 
-        List<Entry> entries = new ArrayList<>();
+        List<Entry> entries = new ArrayList<Entry>();
         entries.add(new TIFFEntry(TIFF.TAG_IMAGE_WIDTH, renderedImage.getWidth()));
         entries.add(new TIFFEntry(TIFF.TAG_IMAGE_HEIGHT, renderedImage.getHeight()));
         // entries.add(new TIFFEntry(TIFF.TAG_ORIENTATION, 1)); // (optional)

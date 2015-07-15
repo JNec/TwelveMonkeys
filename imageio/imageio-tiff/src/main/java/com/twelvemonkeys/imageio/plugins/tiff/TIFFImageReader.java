@@ -28,6 +28,52 @@
 
 package com.twelvemonkeys.imageio.plugins.tiff;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
+import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
+import java.lang.reflect.Constructor;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
+
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.event.IIOReadWarningListener;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.plugins.jpeg.JPEGImageReadParam;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
+
 import com.twelvemonkeys.imageio.ImageReaderBase;
 import com.twelvemonkeys.imageio.color.ColorSpaces;
 import com.twelvemonkeys.imageio.metadata.CompoundDirectory;
@@ -47,27 +93,6 @@ import com.twelvemonkeys.io.LittleEndianDataInputStream;
 import com.twelvemonkeys.io.enc.DecoderStream;
 import com.twelvemonkeys.io.enc.PackBitsDecoder;
 import com.twelvemonkeys.xml.XMLSerializer;
-
-import javax.imageio.*;
-import javax.imageio.event.IIOReadWarningListener;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_Profile;
-import java.awt.image.*;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteOrder;
-import java.util.*;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * ImageReader implementation for Aldus/Adobe Tagged Image File Format (TIFF).
@@ -504,7 +529,7 @@ public class TIFFImageReader extends ImageReaderBase {
         readIFD(imageIndex);
 
         ImageTypeSpecifier rawType = getRawImageType(imageIndex);
-        Set<ImageTypeSpecifier> specs = new LinkedHashSet<>(5);
+        Set<ImageTypeSpecifier> specs = new LinkedHashSet<ImageTypeSpecifier>(5);
 
         // TODO: Based on raw type, we can probably convert to most RGB types at least, maybe gray etc
         // TODO: Planar to chunky by default
@@ -1069,7 +1094,7 @@ public class TIFFImageReader extends ImageReaderBase {
             Constructor<ImageReader> constructor = readerClass.getConstructor(ImageReaderSpi.class);
             return constructor.newInstance(getOriginatingProvider());
         }
-        catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ignore) {
+        catch (Throwable ignore) {
             if (DEBUG) {
                 ignore.printStackTrace();
             }
